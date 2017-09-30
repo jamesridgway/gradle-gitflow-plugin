@@ -29,5 +29,5 @@ public class CommitTest {
     public void getCommitId() {
         assertThat(commit.getCommitId()).isEqualTo(revCommit.getName());
     }
-    
+
 }
