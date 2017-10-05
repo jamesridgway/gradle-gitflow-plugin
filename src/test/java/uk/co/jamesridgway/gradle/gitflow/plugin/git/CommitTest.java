@@ -6,6 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import uk.co.jamesridgway.gradle.gitflow.plugin.tests.GitProjectRule;
 
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommitTest {
@@ -22,7 +24,7 @@ public class CommitTest {
         rule.createFile("readme.txt", "Hello world");
         rule.getGit().add().addFilepattern("readme.txt").call();
         revCommit = rule.getGit().commit().setMessage("First commit").call();
-        commit = new Commit(revCommit);
+        commit = new Commit(revCommit, Collections.emptySet());
     }
 
     @Test

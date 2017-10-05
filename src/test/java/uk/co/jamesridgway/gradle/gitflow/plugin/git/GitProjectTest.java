@@ -13,6 +13,7 @@ import uk.co.jamesridgway.gradle.gitflow.plugin.tests.GitProjectRule;
 
 import java.io.File;
 
+import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
@@ -68,13 +69,15 @@ public class GitProjectTest {
         rule.createFile("readme.txt", "Hello world");
         rule.getGit().add().addFilepattern("readme.txt").call();
         rule.getGit().commit().setMessage("First commit").call();
+        rule.getGit().tag().setName("1.0.0").call();
 
         rule.createFile("readme.2txt", "Goodbye world");
         rule.getGit().add().addFilepattern("readme2.txt").call();
         RevCommit secondCommit = rule.getGit().commit().setMessage("Second commit").call();
+        rule.getGit().tag().setName("2.0.0").call();
 
         GitProject gitProject = new GitProject(project);
-        assertThat(gitProject.getHeadCommit()).contains(new Commit(secondCommit));
+        assertThat(gitProject.getHeadCommit()).contains(new Commit(secondCommit, singleton(new Tag("2.0.0"))));
     }
 
     @Test
