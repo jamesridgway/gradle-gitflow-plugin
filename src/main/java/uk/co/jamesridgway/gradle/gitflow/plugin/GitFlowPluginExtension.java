@@ -13,37 +13,42 @@ public class GitFlowPluginExtension {
     private final PropertyState<Pattern> releasePattern;
     private final PropertyState<Pattern> hotfixPattern;
 
+    private final PropertyState<String> unreleasedVersionTemplate;
+
     public GitFlowPluginExtension(final Project project) {
         masterPattern = project.property(Pattern.class);
         developPattern = project.property(Pattern.class);
         featurePattern = project.property(Pattern.class);
         releasePattern = project.property(Pattern.class);
         hotfixPattern = project.property(Pattern.class);
+        unreleasedVersionTemplate = project.property(String.class);
 
         masterPattern.set(Pattern.compile("^master$"));
         developPattern.set(Pattern.compile("^develop$"));
         featurePattern.set(Pattern.compile("^feature/(.+)$"));
         releasePattern.set(Pattern.compile("^release/(.+)$"));
         hotfixPattern.set(Pattern.compile("^hotfix/(.+)$"));
+        unreleasedVersionTemplate.set("${major}.${minor}.${patch}-${branch}.${commitsSinceLastTag}+sha.${commitId}"
+                + "${dirty?then('.dirty','')}");
     }
 
-    public boolean isMasterBranch(final String branchName) {
+    boolean isMasterBranch(final String branchName) {
         return masterPattern.get().asPredicate().test(branchName);
     }
 
-    public boolean isDevelopBranch(final String branchName) {
+    boolean isDevelopBranch(final String branchName) {
         return developPattern.get().asPredicate().test(branchName);
     }
 
-    public boolean isFeatureBranch(final String branchName) {
+    boolean isFeatureBranch(final String branchName) {
         return featurePattern.get().asPredicate().test(branchName);
     }
 
-    public boolean isReleaseBranch(final String branchName) {
+    boolean isReleaseBranch(final String branchName) {
         return releasePattern.get().asPredicate().test(branchName);
     }
 
-    public boolean isHotfixBranch(final String branchName) {
+    boolean isHotfixBranch(final String branchName) {
         return hotfixPattern.get().asPredicate().test(branchName);
     }
 

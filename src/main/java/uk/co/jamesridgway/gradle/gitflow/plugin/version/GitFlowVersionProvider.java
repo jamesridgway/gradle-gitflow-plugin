@@ -36,6 +36,12 @@ public class GitFlowVersionProvider implements VersionProvider {
         }
 
         // TODO - Else, Unreleased version
+        /*
+         * 1. Find all tags
+         * 2. Find all the tags that are ancestors of head
+         * 3. Work out their distance from head
+         * 4. Pick the tag with the shortest distance.
+         */
 
         return UNKNOWN_VERSION;
     }

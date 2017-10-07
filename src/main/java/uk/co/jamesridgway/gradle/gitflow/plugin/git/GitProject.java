@@ -12,6 +12,7 @@ import org.gradle.api.Project;
 import uk.co.jamesridgway.gradle.gitflow.plugin.utils.Exceptions;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -43,11 +44,26 @@ public class GitProject {
         return Optional.of(new Commit(revCommit, tags));
     }
 
-    public String getBranchName() {
+    public boolean hasHeadCommit() {
+        return getHeadCommit().isPresent();
+    }
+
+    public boolean isAncestorOf(final Commit base, final Commit tip) {
+        RevWalk revWalk = new RevWalk(git.getRepository());
+        try {
+            RevCommit baseCommit = revWalk.lookupCommit(git.getRepository().resolve(base.getCommitId()));
+            RevCommit tipCommit = revWalk.lookupCommit(git.getRepository().resolve(tip.getCommitId()));
+            return revWalk.isMergedInto(baseCommit, tipCommit);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    String getBranchName() {
         return propagateAnyError(() -> git.getRepository().getBranch());
     }
 
-    public boolean isDirty() {
+    boolean isDirty() {
         return propagateAnyError(() -> !git.status().call().isClean());
     }
 
@@ -71,7 +87,4 @@ public class GitProject {
         return (ref.getPeeledObjectId() == null) ? ref.getObjectId() : ref.getPeeledObjectId();
     }
 
-    public boolean hasHeadCommit() {
-        return getHeadCommit().isPresent();
-    }
 }
