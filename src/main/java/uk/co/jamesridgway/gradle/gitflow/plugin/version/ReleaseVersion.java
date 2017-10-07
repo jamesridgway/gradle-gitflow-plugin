@@ -17,7 +17,7 @@ public class ReleaseVersion implements Version, Comparable<ReleaseVersion> {
     private final int minor;
     private final int patch;
 
-    public static Optional<ReleaseVersion> findLatest(final Set<ReleaseVersion> versions) {
+    static Optional<ReleaseVersion> findLatest(final Set<ReleaseVersion> versions) {
         if (versions.isEmpty()) {
             return Optional.empty();
         }
@@ -25,7 +25,7 @@ public class ReleaseVersion implements Version, Comparable<ReleaseVersion> {
         return Optional.ofNullable(sortedVersions.last());
     }
 
-    public static Optional<ReleaseVersion> parse(final String versionString) {
+    static Optional<ReleaseVersion> parse(final String versionString) {
         final Matcher matcher = RELEASE_FORMAT.matcher(versionString);
         if (!matcher.matches()) {
             return Optional.empty();

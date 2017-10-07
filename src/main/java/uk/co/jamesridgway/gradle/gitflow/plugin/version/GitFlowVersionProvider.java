@@ -29,12 +29,7 @@ public class GitFlowVersionProvider implements VersionProvider {
 
         Commit headCommit = gitProject.getHeadCommit().get();
         if (headCommit.isTagged()) {
-            Set<ReleaseVersion> candidateReleaseVersion = headCommit.getTags().stream()
-                    .map(tag -> ReleaseVersion.parse(tag.getShortTagName()))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(toSet());
-            Optional<ReleaseVersion> releaseVersion = ReleaseVersion.findLatest(candidateReleaseVersion);
+            Optional<ReleaseVersion> releaseVersion = inferReleaseVersion(headCommit);
             if (releaseVersion.isPresent()) {
                 return releaseVersion.get();
             }
@@ -43,5 +38,14 @@ public class GitFlowVersionProvider implements VersionProvider {
         // TODO - Else, Unreleased version
 
         return UNKNOWN_VERSION;
+    }
+
+    private Optional<ReleaseVersion> inferReleaseVersion(final Commit headCommit) {
+        Set<ReleaseVersion> candidateReleaseVersion = headCommit.getTags().stream()
+                .map(tag -> ReleaseVersion.parse(tag.getShortTagName()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toSet());
+        return ReleaseVersion.findLatest(candidateReleaseVersion);
     }
 }
