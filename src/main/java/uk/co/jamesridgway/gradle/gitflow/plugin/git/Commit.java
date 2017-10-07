@@ -15,6 +15,10 @@ public class Commit {
 
     private final Set<Tag> tags = new HashSet<>();
 
+    Commit(final RevCommit revCommit) {
+        this.revCommit = revCommit;
+    }
+
     Commit(final RevCommit revCommit, final Set<Tag> tags) {
         this.revCommit = revCommit;
         this.tags.addAll(tags);
