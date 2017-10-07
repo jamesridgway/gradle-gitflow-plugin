@@ -28,6 +28,10 @@ public class Commit {
         return unmodifiableSet(tags);
     }
 
+    public boolean isTagged() {
+        return !tags.isEmpty();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -52,7 +56,4 @@ public class Commit {
                 .toString();
     }
 
-    public boolean isTagged() {
-        return !tags.isEmpty();
-    }
 }
