@@ -2,7 +2,6 @@ package uk.co.jamesridgway.gradle.gitflow.plugin.git;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevObject;
@@ -39,9 +38,8 @@ public class GitProject {
             return Optional.empty();
         }
         RevCommit revCommit = propagateAnyError(() -> git.getRepository().parseCommit(ref.getObjectId()));
-        Set<Tag> tags = findTags(revCommit);
 
-        return Optional.of(new Commit(revCommit, tags));
+        return Optional.of(new Commit(git, revCommit));
     }
 
     public boolean hasHeadCommit() {
@@ -59,32 +57,26 @@ public class GitProject {
         }
     }
 
-    String getBranchName() {
-        return propagateAnyError(() -> git.getRepository().getBranch());
-    }
-
-    boolean isDirty() {
-        return propagateAnyError(() -> !git.status().call().isClean());
-    }
-
-    private Set<Tag> findTags(final RevCommit revCommit) {
+    public Set<Tag> getAllTags() {
         List<Ref> tagRefs = Exceptions.propagateAnyError(() -> git.tagList().call());
         Set<Tag> tags = new HashSet<>();
         for (Ref tagRef : tagRefs) {
             RevWalk walk = new RevWalk(git.getRepository());
             RevTag rev = Exceptions.propagateAnyError(() -> walk.parseTag(tagRef.getObjectId()));
             RevObject target = Exceptions.propagateAnyError(() -> walk.peel(rev));
-            String tagCommitId = ObjectId.toString(target.getId());
-            if (ObjectId.toString(revCommit.getId()).equals(tagCommitId)) {
-                tags.add(new Tag(tagRef.getName()));
-            }
+            RevCommit revCommit = propagateAnyError(() -> git.getRepository().parseCommit(target.getId()));
+            final Commit commit = new Commit(git, revCommit);
+            tags.addAll(commit.getTags());
         }
-
         return tags;
     }
 
-    private ObjectId getTagObjectId(final Ref ref) {
-        return (ref.getPeeledObjectId() == null) ? ref.getObjectId() : ref.getPeeledObjectId();
+    String getBranchName() {
+        return propagateAnyError(() -> git.getRepository().getBranch());
+    }
+
+    boolean isDirty() {
+        return propagateAnyError(() -> !git.status().call().isClean());
     }
 
 }

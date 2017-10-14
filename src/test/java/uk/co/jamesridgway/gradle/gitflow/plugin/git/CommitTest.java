@@ -24,7 +24,7 @@ public class CommitTest {
         rule.createFile("readme.txt", "Hello world");
         rule.getGit().add().addFilepattern("readme.txt").call();
         revCommit = rule.getGit().commit().setMessage("First commit").call();
-        commit = new Commit(revCommit, Collections.emptySet());
+        commit = new Commit(rule.getGit(), revCommit);
     }
 
     @Test

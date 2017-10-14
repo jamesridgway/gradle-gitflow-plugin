@@ -78,7 +78,7 @@ public class GitProjectTest {
         rule.getGit().tag().setName("2.0.0").call();
 
         GitProject gitProject = new GitProject(project);
-        assertThat(gitProject.getHeadCommit()).contains(new Commit(secondCommit, singleton(new Tag("2.0.0"))));
+        assertThat(gitProject.getHeadCommit()).contains(new Commit(rule.getGit(), secondCommit));
     }
 
     @Test
@@ -109,13 +109,13 @@ public class GitProjectTest {
 
         GitProject gitProject = new GitProject(project);
         assertThat(gitProject.isAncestorOf(
-                new Commit(firstCommit, emptySet()),
-                new Commit(secondCommit, emptySet())
+                new Commit(rule.getGit(), firstCommit),
+                new Commit(rule.getGit(), secondCommit)
         )).isTrue();
 
         assertThat(gitProject.isAncestorOf(
-                new Commit(secondCommit, emptySet()),
-                new Commit(firstCommit, emptySet())
+                new Commit(rule.getGit(), secondCommit),
+                new Commit(rule.getGit(), firstCommit)
         )).isFalse();
     }
 
@@ -147,14 +147,30 @@ public class GitProjectTest {
                 .call();
 
         GitProject gitProject = new GitProject(project);
-        assertThat(gitProject.isAncestorOf(new Commit(firstCommit), new Commit(branchACommit))).isTrue();
-        assertThat(gitProject.isAncestorOf(new Commit(branchACommit), new Commit(firstCommit))).isFalse();
-        assertThat(gitProject.isAncestorOf(new Commit(firstCommit), new Commit(branchBCommit))).isTrue();
-        assertThat(gitProject.isAncestorOf(new Commit(branchBCommit), new Commit(firstCommit))).isFalse();
-        assertThat(gitProject.isAncestorOf(new Commit(branchACommit), new Commit(branchBCommit))).isFalse();
-        assertThat(gitProject.isAncestorOf(new Commit(branchBCommit), new Commit(branchACommit))).isFalse();
-        assertThat(gitProject.isAncestorOf(new Commit(branchBCommit), new Commit(branchBCommit2))).isTrue();
-        assertThat(gitProject.isAncestorOf(new Commit(firstCommit), new Commit(branchBCommit2))).isTrue();
-        assertThat(gitProject.isAncestorOf(new Commit(branchACommit), new Commit(branchBCommit2))).isFalse();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), firstCommit), new Commit(rule.getGit(), branchACommit))).isTrue();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), branchACommit), new Commit(rule.getGit(), firstCommit))).isFalse();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), firstCommit), new Commit(rule.getGit(), branchBCommit))).isTrue();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), branchBCommit), new Commit(rule.getGit(), firstCommit))).isFalse();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), branchACommit), new Commit(rule.getGit(), branchBCommit))).isFalse();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), branchBCommit), new Commit(rule.getGit(), branchACommit))).isFalse();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), branchBCommit), new Commit(rule.getGit(), branchBCommit2))).isTrue();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), firstCommit), new Commit(rule.getGit(), branchBCommit2))).isTrue();
+        assertThat(gitProject.isAncestorOf(new Commit(rule.getGit(), branchACommit), new Commit(rule.getGit(), branchBCommit2))).isFalse();
+    }
+
+    @Test
+    public void getAllTags() throws Exception {
+        rule.createFile("readme.txt", "Hello world");
+        rule.getGit().add().addFilepattern("readme.txt").call();
+        rule.getGit().commit().setMessage("First commit").call();
+        rule.getGit().tag().setName("1.0.0").call();
+
+        rule.createFile("readme.2txt", "Goodbye world");
+        rule.getGit().add().addFilepattern("readme2.txt").call();
+        rule.getGit().commit().setMessage("Second commit").call();
+        rule.getGit().tag().setName("2.0.0").call();
+
+        GitProject gitProject = new GitProject(project);
+        assertThat(gitProject.getAllTags()).containsOnly(new Tag("refs/tags/1.0.0"), new Tag("refs/tags/2.0.0"));
     }
 }
