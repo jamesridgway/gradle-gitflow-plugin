@@ -97,10 +97,6 @@ public class ReleaseVersion implements Version, Comparable<ReleaseVersion> {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("major", getMajor())
-                .add("minor", getMinor())
-                .add("patch", getPatch())
-                .toString();
+        return String.format("%d.%d.%d", major, minor, patch);
     }
 }
