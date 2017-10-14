@@ -6,8 +6,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import uk.co.jamesridgway.gradle.gitflow.plugin.tests.GitProjectRule;
 
-import java.util.Collections;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommitTest {

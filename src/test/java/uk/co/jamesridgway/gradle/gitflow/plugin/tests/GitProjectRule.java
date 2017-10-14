@@ -1,13 +1,11 @@
 package uk.co.jamesridgway.gradle.gitflow.plugin.tests;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import uk.co.jamesridgway.gradle.gitflow.plugin.git.Commit;
 
 import java.io.BufferedWriter;
 import java.io.File;

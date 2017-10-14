@@ -9,7 +9,6 @@ import org.eclipse.jgit.revwalk.RevTag;
 import org.eclipse.jgit.revwalk.RevWalk;
 import uk.co.jamesridgway.gradle.gitflow.plugin.utils.Exceptions;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +40,7 @@ public class Commit {
             RevObject target = Exceptions.propagateAnyError(() -> walk.peel(rev));
             String tagCommitId = ObjectId.toString(target.getId());
             if (ObjectId.toString(revCommit.getId()).equals(tagCommitId)) {
-                tags.add(new Tag(tagRef.getName()));
+                tags.add(new Tag(this, tagRef.getName()));
             }
         }
         return unmodifiableSet(tags);
