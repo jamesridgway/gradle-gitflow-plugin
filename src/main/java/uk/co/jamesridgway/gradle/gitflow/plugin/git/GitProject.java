@@ -46,6 +46,7 @@ public class GitProject {
         return getHeadCommit().isPresent();
     }
 
+    @Deprecated
     public boolean isAncestorOf(final Commit base, final Commit tip) {
         RevWalk revWalk = new RevWalk(git.getRepository());
         try {

@@ -7,8 +7,8 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevObject;
 import org.eclipse.jgit.revwalk.RevTag;
 import org.eclipse.jgit.revwalk.RevWalk;
-import uk.co.jamesridgway.gradle.gitflow.plugin.utils.Exceptions;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +16,7 @@ import java.util.Set;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static java.util.Collections.unmodifiableSet;
+import static uk.co.jamesridgway.gradle.gitflow.plugin.utils.Exceptions.propagateAnyError;
 
 public class Commit {
 
@@ -32,12 +33,12 @@ public class Commit {
     }
 
     public Set<Tag> getTags() {
-        List<Ref> tagRefs = Exceptions.propagateAnyError(() -> git.tagList().call());
+        List<Ref> tagRefs = propagateAnyError(() -> git.tagList().call());
         Set<Tag> tags = new HashSet<>();
         for (Ref tagRef : tagRefs) {
             RevWalk walk = new RevWalk(git.getRepository());
-            RevTag rev = Exceptions.propagateAnyError(() -> walk.parseTag(tagRef.getObjectId()));
-            RevObject target = Exceptions.propagateAnyError(() -> walk.peel(rev));
+            RevTag rev = propagateAnyError(() -> walk.parseTag(tagRef.getObjectId()));
+            RevObject target = propagateAnyError(() -> walk.peel(rev));
             String tagCommitId = ObjectId.toString(target.getId());
             if (ObjectId.toString(revCommit.getId()).equals(tagCommitId)) {
                 tags.add(new Tag(this, tagRef.getName()));
@@ -48,6 +49,31 @@ public class Commit {
 
     public boolean isTagged() {
         return !getTags().isEmpty();
+    }
+
+    public boolean hasAncestorOf(final Commit base) {
+        RevWalk revWalk = new RevWalk(git.getRepository());
+        try {
+            RevCommit baseCommit = revWalk.lookupCommit(git.getRepository().resolve(base.getCommitId()));
+            RevCommit tipCommit = revWalk.lookupCommit(git.getRepository().resolve(this.getCommitId()));
+            return revWalk.isMergedInto(baseCommit, tipCommit);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getDistanceFrom(final Commit commit) {
+        if (!this.hasAncestorOf(commit)) {
+            return -1;
+        }
+        Iterable<RevCommit> revCommits = propagateAnyError(() -> git.log()
+                .addRange(commit.revCommit.getId(), this.revCommit.getId())
+                .call());
+        int distance = 0;
+        for (RevCommit rc : revCommits) {
+            distance++;
+        }
+        return distance;
     }
 
     @Override
