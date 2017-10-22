@@ -52,7 +52,6 @@ public class CommitTest {
         assertThat(fourthCommit.getDistanceFrom(secondCommit)).isEqualTo(2);
     }
 
-
     @Test
     public void hasAncestorOfBasicTest() throws Exception {
         rule.createFile("readme.txt", "Hello world");
@@ -119,4 +118,14 @@ public class CommitTest {
                 .isFalse();
     }
 
+    @Test
+    public void getTag() throws Exception {
+        rule.createFile("readme.txt", "Hello world");
+        rule.getGit().add().addFilepattern("readme.txt").call();
+        RevCommit revCommit = rule.getGit().commit().setMessage("First commit").call();
+        rule.getGit().tag().setName("tag1").call();
+        final Commit firstCommit = new Commit(rule.getGit(), revCommit);
+
+        assertThat(firstCommit.getTags()).containsOnly(new Tag(firstCommit, "refs/tags/tag1"));
+    }
 }

@@ -72,11 +72,11 @@ public class GitProject {
         return tags;
     }
 
-    String getBranchName() {
+    public String getBranchName() {
         return propagateAnyError(() -> git.getRepository().getBranch());
     }
 
-    boolean isDirty() {
+    public boolean isDirty() {
         return propagateAnyError(() -> !git.status().call().isClean());
     }
 

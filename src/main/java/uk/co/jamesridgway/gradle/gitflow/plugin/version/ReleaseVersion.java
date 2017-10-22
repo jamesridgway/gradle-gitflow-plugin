@@ -1,7 +1,5 @@
 package uk.co.jamesridgway.gradle.gitflow.plugin.version;
 
-import com.google.common.base.MoreObjects;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
