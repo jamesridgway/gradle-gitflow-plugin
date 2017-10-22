@@ -1,0 +1,21 @@
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile group: 'com.google.guava', name: 'guava', version: '23.0'
+    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.8.0.201706111038-r'
+    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.23'
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDirs = ['../src/main/java']
+        }
+    }
+}

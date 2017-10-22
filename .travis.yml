@@ -1,6 +1,10 @@
 language: java
 jdk:
-  - oraclejdk8
-  - oraclejdk9
+- oraclejdk8
 before_install:
- - chmod +x gradlew
+- chmod +x gradlew
+script: ./gradlew check
+after_success: ./gradlew publish
+env:
+  global:
+    secure: Gk9NLbUyAP9gPAOZtLYm6u3iewjY7NAzSeYltpWbFm6+H2poHL3w1+RTQ/NiXg05aqCBCUaqqfHcYg9MiO+uZ8ecs6nHInTy4nlTiQLlhpRuijLciKnyNdq2yktYKWsnJ4Po1TX4NIdsV+bK1l9ntUQJC1YhFQgn9HJS7jemjcnP57niJOCXogM72NkD7fhL8QTT8gDim5cwQlOV5LQv6E9xxPn4Lqy5K3hzIPmjBImRBH5y6sNJ5rVEJ1t+1jKg/BgMG7I+dhW8Ssx7GoPhmum0K/Qy/Q84ivFvLCOGcrv9yXZLtQ5K0PacsRp11/dJ+ZnBd6wM3vZtOurAq/6ivuvM5QSczqvWBjuk+5Zb7A8UHETz2gm3W+hz3Ri7M7IVILQrI0wshNJeT3ygcYgwoXvcEiYgkraMdKFQyy4reMm1zqavdwA0nRjjnfC1EfEZl0FoGU5VVjCvuVC0YOnb242IyhWI9bTL5UXEfNaUc7hEfwtPjrvWeUdl/dAqpnidFLeFBrqz032PeJmDIo+YhXWMLOpZaS/ps3yo/U8hG2PuGKBt5GA/0/GrAamzpw9s/GKTFihBdqznEBliovh2gFtBTsiBFGUJm6+FFuIEApxnFwfX9sN//LY3qdLzq1cPwS9tNhuiQX2tmWkqB2bnVB/nQTFdyxmljQ6+HgLYC5c=

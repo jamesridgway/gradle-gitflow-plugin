@@ -1,21 +1,36 @@
+import uk.co.jamesridgway.gradle.gitflow.plugin.GitFlowPlugin
+
 group 'uk.co.jamesridgway'
-version '1.0-SNAPSHOT'
+description = "Gitflow versioning plugin for gradle"
 
 apply plugin: 'checkstyle'
-apply plugin: 'java'
-apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    jcenter()
     mavenLocal()
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
 }
 
 dependencies {
     compile gradleApi()
+    compile localGroovy()
 
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
     compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.8.0.201706111038-r'
@@ -36,14 +51,15 @@ jacocoTestReport {
 }
 check.dependsOn jacocoTestReport
 
+bintray.pkg {
+    repo = 'gradle-gitflow-plugin'
+    licenses = ['MIT']
+    labels = ['gradle', 'plugin', 'git', 'gitflow']
+    websiteUrl = "https://github.com/jamesridgway/gradle-gitflow-plugin"
+    issueTrackerUrl = "https://github.com/jamesridgway/gradle-gitflow-plugin/issues"
+    vcsUrl = "${websiteUrl}.git"
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourceJar {
-                classifier "sources"
-            }
-        }
-    }
 }
+apply plugin: GitFlowPlugin
+apply from: 'gradle/maven.gradle'
+apply from: 'gradle/bintray.gradle'
