@@ -1,7 +1,5 @@
 package uk.co.jamesridgway.gradle.gitflow.plugin.version;
 
-import com.google.common.base.MoreObjects;
-
 public class UnknownVersion implements Version {
 
     @Override
@@ -21,10 +19,6 @@ public class UnknownVersion implements Version {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("major", getMajor())
-                .add("minor", getMinor())
-                .add("patch", getPatch())
-                .toString();
+        return "0.0.0";
     }
 }

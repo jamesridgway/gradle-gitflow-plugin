@@ -4,6 +4,7 @@ version '1.0-SNAPSHOT'
 apply plugin: 'checkstyle'
 apply plugin: 'java'
 apply plugin: 'maven-publish'
+apply plugin: 'jacoco'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -27,6 +28,14 @@ dependencies {
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
+
+jacocoTestReport {
+    reports {
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+check.dependsOn jacocoTestReport
+
 
 publishing {
     publications {

@@ -10,10 +10,12 @@ public class Tag {
 
     private static final Pattern SHORT_TAG_PATTERN = Pattern.compile("^refs/tags/(.*)");
 
+    private final Commit commit;
     private final String tag;
     private final String shortTag;
 
-    Tag(final String tag) {
+    Tag(final Commit commit, final String tag) {
+        this.commit = commit;
         this.tag = tag;
         Matcher matcher = SHORT_TAG_PATTERN.matcher(tag);
         if (matcher.matches()) {
@@ -31,6 +33,10 @@ public class Tag {
         return shortTag;
     }
 
+    public Commit getCommit() {
+        return commit;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -40,18 +46,20 @@ public class Tag {
             return false;
         }
         final Tag tag1 = (Tag) o;
-        return Objects.equals(tag, tag1.tag)
+        return Objects.equals(commit, tag1.commit)
+                && Objects.equals(tag, tag1.tag)
                 && Objects.equals(shortTag, tag1.shortTag);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tag, shortTag);
+        return Objects.hash(commit, tag, shortTag);
     }
 
     @Override
     public String toString() {
         return toStringHelper(this)
+                .add("commit", commit)
                 .add("tag", tag)
                 .add("shortTag", shortTag)
                 .toString();

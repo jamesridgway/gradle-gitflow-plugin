@@ -23,6 +23,7 @@ public class ReleaseVersionTest {
         assertThat(releaseVersion.getMajor()).isEqualTo(1);
         assertThat(releaseVersion.getMinor()).isEqualTo(2);
         assertThat(releaseVersion.getPatch()).isEqualTo("3");
+        assertThat(releaseVersion.toString()).isEqualTo("1.2.3");
 
     }
 
