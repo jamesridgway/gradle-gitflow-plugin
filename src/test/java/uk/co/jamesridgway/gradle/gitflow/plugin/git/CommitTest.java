@@ -128,4 +128,19 @@ public class CommitTest {
 
         assertThat(firstCommit.getTags()).containsOnly(new Tag(firstCommit, "refs/tags/tag1"));
     }
+
+    @Test
+    public void getTagAnnotated() throws Exception {
+        rule.createFile("readme.txt", "Hello world");
+        rule.getGit().add().addFilepattern("readme.txt").call();
+        RevCommit revCommit = rule.getGit().commit().setMessage("First commit").call();
+        rule.getGit().tag()
+                .setName("tag1")
+                .setMessage("Annotated tag1")
+                .setAnnotated(true)
+                .call();
+        final Commit firstCommit = new Commit(rule.getGit(), revCommit);
+
+        assertThat(firstCommit.getTags()).containsOnly(new Tag(firstCommit, "refs/tags/tag1"));
+    }
 }

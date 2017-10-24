@@ -54,6 +54,16 @@ public class GitFlowVersionProviderTest {
         git.commit().setMessage("First commit").call();
         git.tag().setName("1.0.0").call();
 
+        assertThat(gitFlowVersionProvider.getVersion(project)).isEqualTo(new ReleaseVersion(1, 0, 0));
+    }
+
+    @Test
+    public void getVersionForAReleaseMultipleTags() throws Exception {
+        createFile("readme.txt", "Hello world");
+        git.add().addFilepattern("readme.txt").call();
+        git.commit().setMessage("First commit").call();
+        git.tag().setName("1.0.0").call();
+
         createFile("readme.2txt", "Goodbye world");
         git.add().addFilepattern("readme2.txt").call();
         git.commit().setMessage("Second commit").call();

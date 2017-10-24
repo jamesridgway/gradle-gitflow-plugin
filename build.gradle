@@ -1,4 +1,4 @@
-import uk.co.jamesridgway.gradle.gitflow.plugin.GitFlowPlugin
+//import uk.co.jamesridgway.gradle.gitflow.plugin.GitFlowPlugin
 
 group 'uk.co.jamesridgway'
 description = "Gitflow versioning plugin for gradle"
@@ -33,7 +33,7 @@ dependencies {
     compile localGroovy()
 
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
-    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.8.0.201706111038-r'
+    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.9.0.201710071750-r'
     compile group: 'org.freemarker', name: 'freemarker', version: '2.3.23'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -60,6 +60,7 @@ bintray.pkg {
     vcsUrl = "${websiteUrl}.git"
 
 }
-apply plugin: GitFlowPlugin
+//apply plugin: GitFlowPlugin
 apply from: 'gradle/maven.gradle'
 apply from: 'gradle/bintray.gradle'
+println version

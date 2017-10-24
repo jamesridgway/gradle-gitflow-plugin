@@ -4,8 +4,6 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevObject;
-import org.eclipse.jgit.revwalk.RevTag;
 import org.eclipse.jgit.revwalk.RevWalk;
 
 import java.io.IOException;
@@ -36,11 +34,10 @@ public class Commit {
         List<Ref> tagRefs = propagateAnyError(() -> git.tagList().call());
         Set<Tag> tags = new HashSet<>();
         for (Ref tagRef : tagRefs) {
-            RevWalk walk = new RevWalk(git.getRepository());
-            RevTag rev = propagateAnyError(() -> walk.parseTag(tagRef.getObjectId()));
-            RevObject target = propagateAnyError(() -> walk.peel(rev));
-            String tagCommitId = ObjectId.toString(target.getId());
-            if (ObjectId.toString(revCommit.getId()).equals(tagCommitId)) {
+            Ref peeledRed = propagateAnyError(() -> git.getRepository().peel(tagRef));
+            ObjectId commitId = peeledRed.getPeeledObjectId() != null ? peeledRed.getPeeledObjectId()
+                    : peeledRed.getObjectId();
+            if (ObjectId.toString(commitId).equals(getCommitId())) {
                 tags.add(new Tag(this, tagRef.getName()));
             }
         }
