@@ -52,7 +52,7 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 bintray.pkg {
-    repo = 'gradle-gitflow-plugin'
+    repo = 'gitflow-plugins'
     licenses = ['MIT']
     labels = ['gradle', 'plugin', 'git', 'gitflow']
     websiteUrl = "https://github.com/jamesridgway/gradle-gitflow-plugin"
