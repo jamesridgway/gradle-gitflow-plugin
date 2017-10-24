@@ -63,4 +63,3 @@ bintray.pkg {
 apply plugin: GitFlowPlugin
 apply from: 'gradle/maven.gradle'
 apply from: 'gradle/bintray.gradle'
-println version

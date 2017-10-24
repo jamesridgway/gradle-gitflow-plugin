@@ -15,7 +15,7 @@ public class GitFlowPlugin implements Plugin<Project> {
         GitFlowVersionProvider versionProvider = new GitFlowVersionProvider(gitFlowPluginExtension);
         Version version = versionProvider.getVersion(project);
 
-        project.setVersion(version.getVersionString());
+        project.setVersion(version);
     }
 
 }
