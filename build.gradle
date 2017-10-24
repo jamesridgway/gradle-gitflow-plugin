@@ -1,4 +1,4 @@
-//import uk.co.jamesridgway.gradle.gitflow.plugin.GitFlowPlugin
+import uk.co.jamesridgway.gradle.gitflow.plugin.GitFlowPlugin
 
 group 'uk.co.jamesridgway'
 description = "Gitflow versioning plugin for gradle"
@@ -60,7 +60,7 @@ bintray.pkg {
     vcsUrl = "${websiteUrl}.git"
 
 }
-//apply plugin: GitFlowPlugin
+apply plugin: GitFlowPlugin
 apply from: 'gradle/maven.gradle'
 apply from: 'gradle/bintray.gradle'
 println version
