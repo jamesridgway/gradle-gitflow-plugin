@@ -1,6 +1,7 @@
 package uk.co.jamesridgway.gradle.gitflow.plugin.git;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -61,13 +62,20 @@ public class GitProject {
     public Set<Tag> getAllTags() {
         List<Ref> tagRefs = Exceptions.propagateAnyError(() -> git.tagList().call());
         Set<Tag> tags = new HashSet<>();
-        for (Ref tagRef : tagRefs) {
-            RevWalk walk = new RevWalk(git.getRepository());
-            RevTag rev = Exceptions.propagateAnyError(() -> walk.parseTag(tagRef.getObjectId()));
-            RevObject target = Exceptions.propagateAnyError(() -> walk.peel(rev));
-            RevCommit revCommit = propagateAnyError(() -> git.getRepository().parseCommit(target.getId()));
-            final Commit commit = new Commit(git, revCommit);
-            tags.addAll(commit.getTags());
+        try (RevWalk walk = new RevWalk(git.getRepository())) {
+            for (Ref tagRef : tagRefs) {
+                final AnyObjectId commitId;
+                if (tagRef instanceof RevTag) {
+                    RevTag rev = Exceptions.propagateAnyError(() -> walk.parseTag(tagRef.getObjectId()));
+                    RevObject target = Exceptions.propagateAnyError(() -> walk.peel(rev));
+                    commitId = target.getId();
+                } else {
+                    commitId = tagRef.getObjectId();
+                }
+                RevCommit revCommit = propagateAnyError(() -> git.getRepository().parseCommit(commitId));
+                final Commit commit = new Commit(git, revCommit);
+                tags.addAll(commit.getTags());
+            }
         }
         return tags;
     }
