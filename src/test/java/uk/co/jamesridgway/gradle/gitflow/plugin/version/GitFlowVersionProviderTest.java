@@ -100,7 +100,7 @@ public class GitFlowVersionProviderTest {
 
         assertThat(gitFlowVersionProvider.getVersion(project))
                 .isInstanceOf(UnreleasedVersion.class)
-                .hasToString("1.0.0-feature/james/FEAT-1.2+sha." + shortCommitId);
+                .hasToString("1.0.0-feature_james_FEAT-1.2+sha." + shortCommitId);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class GitFlowVersionProviderTest {
 
         assertThat(gitFlowVersionProvider.getVersion(project))
                 .isInstanceOf(UnreleasedVersion.class)
-                .hasToString("1.0.0-feature/james/FEAT-1.1+sha." + shortCommitId + ".dirty");
+                .hasToString("1.0.0-feature_james_FEAT-1.1+sha." + shortCommitId + ".dirty");
     }
 
     private void ignoreCurrentUntrackedChanges() throws Exception {

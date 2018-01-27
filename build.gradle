@@ -48,6 +48,4 @@ bintray.pkg {
     websiteUrl = "https://github.com/jamesridgway/gradle-gitflow-plugin"
     issueTrackerUrl = "https://github.com/jamesridgway/gradle-gitflow-plugin/issues"
     vcsUrl = "${websiteUrl}.git"
-
 }
-

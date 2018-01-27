@@ -9,14 +9,13 @@ public class GitFlowPluginExtension {
 
     public GitFlowPluginExtension(final Project project) {
         unreleasedVersionTemplate = project.property(String.class);
-            unreleasedVersionTemplate.set("${major}.${minor}.${patch}-${branch}.${commitsSinceLastTag}+sha."
-                    + "${commitId?substring(0,7)}${dirty?then('.dirty','')}");
+        unreleasedVersionTemplate.set("${major}.${minor}.${patch}-${branch?replace('/', '_')}."
+                + "${commitsSinceLastTag}+sha.${commitId?substring(0,7)}${dirty?then('.dirty','')}");
     }
 
     public String getUnreleaseVersionTemplate() {
         return unreleasedVersionTemplate.get();
     }
-
 
 
 }
