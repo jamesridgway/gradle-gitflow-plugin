@@ -1,4 +1,3 @@
-import uk.co.jamesridgway.gradle.gitflow.plugin.version.ReleaseVersion
 bintray {
     if (project.hasProperty('bintrayUser')) {
         user = project.getProperties().get("bintrayUser")
@@ -24,6 +23,6 @@ bintray {
     }
 }
 
-if (version instanceof ReleaseVersion) {
+if (version.isRelease()) {
     publish.dependsOn bintrayUpload
 }

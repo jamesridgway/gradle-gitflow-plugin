@@ -33,7 +33,7 @@ The unreleased version format can be configured:
 ```groovy
 gitflow {
     // Customise template for unreleased version (uses freemarker)
-    unreleasedVersionTemplate "${major}.${minor}.${patch}-${branch}.${commitsSinceLastTag}+sha.${commitId?substring(0,7)}${dirty?then('.dirty','')}"
+    unreleasedVersionTemplate "${major}.${minor}.${patch}-${branch?replace('/', '_')}.${commitsSinceLastTag}+sha.${commitId?substring(0,7)}${dirty?then('.dirty','')}"
 }
 ```
 
