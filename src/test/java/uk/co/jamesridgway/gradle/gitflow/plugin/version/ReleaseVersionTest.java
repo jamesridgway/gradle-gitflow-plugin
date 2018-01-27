@@ -24,7 +24,12 @@ public class ReleaseVersionTest {
         assertThat(releaseVersion.getMinor()).isEqualTo(2);
         assertThat(releaseVersion.getPatch()).isEqualTo("3");
         assertThat(releaseVersion.toString()).isEqualTo("1.2.3");
+    }
 
+    @Test
+    public void isRelease() {
+        final ReleaseVersion releaseVersion = new ReleaseVersion(1, 0, 0);
+        assertThat(releaseVersion.isRelease()).isTrue();
     }
 
     @Test

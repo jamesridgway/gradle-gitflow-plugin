@@ -15,4 +15,10 @@ public class UnknownVersionTest {
         assertThat(unknownVersion.toString()).isEqualTo("0.0.0");
     }
 
+    @Test
+    public void isNotRelease() {
+        Version unknownVersion = new UnknownVersion();
+        assertThat(unknownVersion.isRelease()).isFalse();
+    }
+
 }
