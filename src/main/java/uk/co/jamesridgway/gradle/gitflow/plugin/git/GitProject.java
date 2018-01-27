@@ -12,7 +12,6 @@ import org.gradle.api.Project;
 import uk.co.jamesridgway.gradle.gitflow.plugin.utils.Exceptions;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -45,18 +44,6 @@ public class GitProject {
 
     public boolean hasHeadCommit() {
         return getHeadCommit().isPresent();
-    }
-
-    @Deprecated
-    public boolean isAncestorOf(final Commit base, final Commit tip) {
-        RevWalk revWalk = new RevWalk(git.getRepository());
-        try {
-            RevCommit baseCommit = revWalk.lookupCommit(git.getRepository().resolve(base.getCommitId()));
-            RevCommit tipCommit = revWalk.lookupCommit(git.getRepository().resolve(tip.getCommitId()));
-            return revWalk.isMergedInto(baseCommit, tipCommit);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public Set<Tag> getAllTags() {
