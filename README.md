@@ -19,7 +19,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'uk.co.jamesridgway:gradle-gitflow-plugin:1.1.0'
+        classpath 'uk.co.jamesridgway:gradle-gitflow-plugin:1.2.0'
     }
 }
 ```
@@ -51,7 +51,7 @@ For any commit that is not tagged with a release version (`major.minor.patch`) a
 By default, an unreleased version is as follows:
 
     0.0.1-feature/test1.1+sha.8661cfd.dirty
-    | | | |             |     |       |    
+    | | | |             |     |       |
     | | | |             |     |       └ "dirty" is ppended if the commit is dirty
     | | | |             |     └ Short commit id
     | | | |             └ Number of commits since last tag
