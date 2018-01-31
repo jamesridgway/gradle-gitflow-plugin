@@ -5,7 +5,9 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.co.jamesridgway.gradle.gitflow.plugin.GitFlowPluginExtension;
@@ -25,6 +27,9 @@ import static uk.co.jamesridgway.gradle.gitflow.plugin.version.GitFlowVersionPro
 @RunWith(MockitoJUnitRunner.class)
 public class GitFlowVersionProviderTest {
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     private Git git;
 
     private Project project;
@@ -34,9 +39,12 @@ public class GitFlowVersionProviderTest {
     private GitFlowVersionProvider gitFlowVersionProvider;
 
     @Before
-    public void setUp() {
-        project = ProjectBuilder.builder().build();
-        git = Exceptions.propagateAnyError(() -> Git.init().setDirectory(project.getRootDir()).call());
+    public void setUp() throws Exception {
+        project = ProjectBuilder.builder()
+                .withGradleUserHomeDir(temporaryFolder.newFolder())
+                .build();
+        git = Exceptions.propagateAnyError(() -> Git.init()
+                .setDirectory(project.getRootDir()).call());
         project.getPlugins().apply("uk.co.jamesridgway.gradle.gitflow.plugin");
         gitFlowPluginExtension = new GitFlowPluginExtension(project);
         gitFlowVersionProvider = new GitFlowVersionProvider(gitFlowPluginExtension);
@@ -65,13 +73,54 @@ public class GitFlowVersionProviderTest {
         git.tag().setName("1.0.0").call();
 
         createFile("readme.2txt", "Goodbye world");
-        git.add().addFilepattern("readme2.txt").call();
+        git.add().addFilepattern("readme.2txt").call();
         git.commit().setMessage("Second commit").call();
         git.tag().setName("non-version-tag").call();
         git.tag().setName("1.9.9").call();
         git.tag().setName("2.0.0").call();
 
-        assertThat(gitFlowVersionProvider.getVersion(project)).isEqualTo(new ReleaseVersion(2, 0, 0));
+        assertThat(gitFlowVersionProvider.getVersion(project))
+                .isEqualTo(new ReleaseVersion(2, 0, 0));
+    }
+
+    @Test
+    public void getVersionWhenCommitsAfterMultipleTaggedRelease() throws Exception {
+        createFile("readme.txt", "Hello world");
+        git.add().addFilepattern("readme.txt").call();
+        git.commit().setMessage("First commit").call();
+        git.tag().setName("1.0.0").call();
+        git.tag().setName("2.0.0").call();
+
+        assertThat(gitFlowVersionProvider.getVersion(project))
+                .isEqualTo(new ReleaseVersion(2, 0, 0));
+
+        createFile("readme.2txt", "Goodbye world");
+        git.add().addFilepattern("readme.2txt").call();
+        final RevCommit lastCommit = git.commit().setMessage("Second commit").call();
+
+        String shortCommitId = lastCommit.getId().getName().substring(0, 7);
+
+        assertThat(gitFlowVersionProvider.getVersion(project))
+                .isInstanceOf(UnreleasedVersion.class)
+                .hasToString("2.0.0-master.1+sha." + shortCommitId);
+    }
+
+    @Test
+    public void releaseVersionCannotBeDirty() throws Exception {
+        createFile("readme.txt", "Hello world");
+        git.add().addFilepattern("readme.txt").call();
+        final RevCommit lastCommit = git.commit().setMessage("First commit").call();
+        git.tag().setName("1.0.0").call();
+
+        String shortCommitId = lastCommit.getId().getName().substring(0, 7);
+
+        assertThat(gitFlowVersionProvider.getVersion(project)).isEqualTo(new ReleaseVersion(1, 0, 0));
+
+        createFile("readme.txt", "This should now be a dirty file");
+
+        assertThat(gitFlowVersionProvider.getVersion(project))
+                .isInstanceOf(UnreleasedVersion.class)
+                .hasToString("1.0.0-master.0+sha." + shortCommitId + ".dirty");
     }
 
     @Test
