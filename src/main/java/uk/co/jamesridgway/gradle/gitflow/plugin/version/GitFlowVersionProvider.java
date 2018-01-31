@@ -8,6 +8,7 @@ import uk.co.jamesridgway.gradle.gitflow.plugin.git.Commit;
 import uk.co.jamesridgway.gradle.gitflow.plugin.git.GitProject;
 import uk.co.jamesridgway.gradle.gitflow.plugin.git.Tag;
 
+import java.util.List;
 import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class GitFlowVersionProvider implements VersionProvider {
         }
 
         Commit headCommit = gitProject.getHeadCommit().get();
-        if (headCommit.isTagged()) {
+        if (headCommit.isTagged() && !gitProject.isDirty()) {
             Optional<ReleaseVersion> releaseVersion = inferReleaseVersion(headCommit);
             if (releaseVersion.isPresent()) {
                 return releaseVersion.get();
@@ -66,18 +67,20 @@ public class GitFlowVersionProvider implements VersionProvider {
 
         Commit headCommit = gitProject.getHeadCommit().get();
 
-        NavigableMap<Integer, Tag> ancestorTags = new TreeMap<>(tags.stream()
+        NavigableMap<Integer, List<Tag>> ancestorTags = new TreeMap<>(tags.stream()
                 .filter(t -> headCommit.hasAncestorOf(t.getCommit()))
                 .filter(t -> ReleaseVersion.parse(t.getShortTagName()).isPresent())
-                .collect(Collectors.toMap(t -> headCommit.getDistanceFrom(t.getCommit()), t -> t)));
+                .collect(Collectors.groupingBy(t -> headCommit.getDistanceFrom(t.getCommit()))));
 
         if (ancestorTags.isEmpty()) {
             return Optional.empty();
         }
 
         final int distanceFromLastTag = ancestorTags.firstEntry().getKey();
-        final ReleaseVersion latestReleaseVersion = ReleaseVersion.parse(ancestorTags.firstEntry().getValue()
-                .getShortTagName()).get();
+        final Set<ReleaseVersion> closestTags = ancestorTags.firstEntry().getValue().stream()
+                .map(tag -> ReleaseVersion.parse(tag.getShortTagName()).get())
+                .collect(Collectors.toSet());
+        final ReleaseVersion latestReleaseVersion = ReleaseVersion.findLatest(closestTags).get();
 
         UnreleasedVersion unreleasedVersion = UnreleasedVersion.build(latestReleaseVersion,
                 gitFlowPluginExtension.getUnreleaseVersionTemplate())
