@@ -13,7 +13,7 @@ public class GitFlowPlugin implements Plugin<Project> {
                 .create("gitflow", GitFlowPluginExtension.class, project);
 
         GitFlowVersionProvider versionProvider = new GitFlowVersionProvider(gitFlowPluginExtension);
-        Version version = versionProvider.getVersion(project);
+        Version version = versionProvider.getVersion(project.getRootDir());
 
         project.setVersion(version);
     }
