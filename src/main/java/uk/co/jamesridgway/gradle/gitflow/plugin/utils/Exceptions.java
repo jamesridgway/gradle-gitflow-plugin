@@ -14,4 +14,17 @@ public class Exceptions {
             throw new RuntimeException(e);
         }
     }
+
+    public static void propagateAnyError(final Action action) {
+        try {
+            action.perform();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FunctionalInterface
+    public interface Action {
+        void perform() throws Exception;
+    }
 }
