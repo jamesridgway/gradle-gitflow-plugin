@@ -11,7 +11,6 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.co.jamesridgway.gradle.gitflow.plugin.GitFlowPluginExtension;
-import uk.co.jamesridgway.gradle.gitflow.plugin.utils.Exceptions;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,8 +42,7 @@ public class GitFlowVersionProviderTest {
         project = ProjectBuilder.builder()
                 .withGradleUserHomeDir(temporaryFolder.newFolder())
                 .build();
-        git = Exceptions.propagateAnyError(() -> Git.init()
-                .setDirectory(project.getRootDir()).call());
+        git = Git.init().setDirectory(project.getRootDir()).call();
         project.getPlugins().apply("uk.co.jamesridgway.gradle.gitflow.plugin");
         gitFlowPluginExtension = new GitFlowPluginExtension(project);
         gitFlowVersionProvider = new GitFlowVersionProvider(gitFlowPluginExtension);
@@ -52,7 +50,7 @@ public class GitFlowVersionProviderTest {
 
     @Test
     public void getVersionNoCommits() {
-        assertThat(gitFlowVersionProvider.getVersion(project)).isEqualTo(UNKNOWN_VERSION);
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir())).isEqualTo(UNKNOWN_VERSION);
     }
 
     @Test
@@ -62,7 +60,7 @@ public class GitFlowVersionProviderTest {
         git.commit().setMessage("First commit").call();
         git.tag().setName("1.0.0").call();
 
-        assertThat(gitFlowVersionProvider.getVersion(project)).isEqualTo(new ReleaseVersion(1, 0, 0));
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir())).isEqualTo(new ReleaseVersion(1, 0, 0));
     }
 
     @Test
@@ -79,7 +77,7 @@ public class GitFlowVersionProviderTest {
         git.tag().setName("1.9.9").call();
         git.tag().setName("2.0.0").call();
 
-        assertThat(gitFlowVersionProvider.getVersion(project))
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isEqualTo(new ReleaseVersion(2, 0, 0));
     }
 
@@ -91,7 +89,7 @@ public class GitFlowVersionProviderTest {
         git.tag().setName("1.0.0").call();
         git.tag().setName("2.0.0").call();
 
-        assertThat(gitFlowVersionProvider.getVersion(project))
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isEqualTo(new ReleaseVersion(2, 0, 0));
 
         createFile("readme.2txt", "Goodbye world");
@@ -100,7 +98,7 @@ public class GitFlowVersionProviderTest {
 
         String shortCommitId = lastCommit.getId().getName().substring(0, 7);
 
-        assertThat(gitFlowVersionProvider.getVersion(project))
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isInstanceOf(UnreleasedVersion.class)
                 .hasToString("2.0.0-master.1+sha." + shortCommitId);
     }
@@ -114,11 +112,11 @@ public class GitFlowVersionProviderTest {
 
         String shortCommitId = lastCommit.getId().getName().substring(0, 7);
 
-        assertThat(gitFlowVersionProvider.getVersion(project)).isEqualTo(new ReleaseVersion(1, 0, 0));
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir())).isEqualTo(new ReleaseVersion(1, 0, 0));
 
         createFile("readme.txt", "This should now be a dirty file");
 
-        assertThat(gitFlowVersionProvider.getVersion(project))
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isInstanceOf(UnreleasedVersion.class)
                 .hasToString("1.0.0-master.0+sha." + shortCommitId + ".dirty");
     }
@@ -147,7 +145,7 @@ public class GitFlowVersionProviderTest {
 
         String shortCommitId = lastCommit.getId().getName().substring(0, 7);
 
-        assertThat(gitFlowVersionProvider.getVersion(project))
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isInstanceOf(UnreleasedVersion.class)
                 .hasToString("1.0.0-feature_james_FEAT-1.2+sha." + shortCommitId);
     }
@@ -175,7 +173,7 @@ public class GitFlowVersionProviderTest {
 
         String shortCommitId = lastCommit.getId().getName().substring(0, 7);
 
-        assertThat(gitFlowVersionProvider.getVersion(project))
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isInstanceOf(UnreleasedVersion.class)
                 .hasToString("1.0.0-feature_james_FEAT-1.1+sha." + shortCommitId + ".dirty");
     }

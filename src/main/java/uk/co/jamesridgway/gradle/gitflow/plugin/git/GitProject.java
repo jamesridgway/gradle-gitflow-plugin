@@ -6,25 +6,28 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevObject;
+import org.eclipse.jgit.revwalk.RevSort;
 import org.eclipse.jgit.revwalk.RevTag;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.gradle.api.Project;
 import uk.co.jamesridgway.gradle.gitflow.plugin.utils.Exceptions;
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.stream.Collectors.groupingBy;
 import static uk.co.jamesridgway.gradle.gitflow.plugin.utils.Exceptions.propagateAnyError;
 
 public class GitProject {
 
     private final Git git;
 
-    public GitProject(final Project project) {
-        final File gitDirectory = new File(project.getRootDir(), ".git");
+    public GitProject(final File file) {
+        final File gitDirectory = new File(file, ".git");
         if (!gitDirectory.exists() || !gitDirectory.isDirectory()) {
             throw new RuntimeException(String.format("Could not find git directory, expecting %s to exist.",
                     gitDirectory.getAbsolutePath()));
@@ -66,6 +69,34 @@ public class GitProject {
         }
         return tags;
     }
+
+    public Optional<DistanceToTags> getDistanceToMostRecentTags(final Set<Tag> tags) {
+
+        Map<String, List<Tag>> tagCommits = tags.stream().collect(groupingBy(t -> t.getCommit().getCommitId()));
+
+        RevWalk walk = new RevWalk(git.getRepository());
+        Ref headCommit = propagateAnyError(() -> git.getRepository().findRef(Constants.HEAD));
+
+        propagateAnyError(() -> walk.markStart(walk.parseCommit(headCommit.getObjectId())));
+        walk.sort(RevSort.COMMIT_TIME_DESC, true);
+        AtomicInteger count = new AtomicInteger();
+
+        RevCommit commit = propagateAnyError(walk::next);
+
+        while (commit != null) {
+
+            if (tagCommits.containsKey(commit.getName())) {
+                return Optional.of(new DistanceToTags(tagCommits.get(commit.getName()), count.get()));
+
+            }
+            count.getAndIncrement();
+            commit = propagateAnyError(walk::next);
+        }
+        walk.close();
+
+        return Optional.empty();
+    }
+
 
     public String getBranchName() {
         return propagateAnyError(() -> git.getRepository().getBranch());
