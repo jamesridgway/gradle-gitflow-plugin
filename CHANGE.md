@@ -1,4 +1,6 @@
 # Change Log
+## 1.3.0
+* Improved performance for identifying the most recent tag.
 
 ## 1.2.0
 * Upgraded to Gradle 4.5
