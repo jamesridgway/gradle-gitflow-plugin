@@ -63,7 +63,7 @@ public class GitFlowPluginTest {
 
         assertThat(project.getVersion())
                 .isInstanceOf(UnreleasedVersion.class)
-                .hasToString("1.0.0-feature_james_FEAT-1.2+sha." + shortCommitId);
+                .hasToString("1.0.0.2-feature_james_FEAT-1+sha." + shortCommitId);
     }
 
 }

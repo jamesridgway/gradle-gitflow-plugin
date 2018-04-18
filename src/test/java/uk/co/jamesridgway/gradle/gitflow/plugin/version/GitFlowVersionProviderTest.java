@@ -100,7 +100,7 @@ public class GitFlowVersionProviderTest {
 
         assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isInstanceOf(UnreleasedVersion.class)
-                .hasToString("2.0.0-master.1+sha." + shortCommitId);
+                .hasToString("2.0.0.1-master+sha." + shortCommitId);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class GitFlowVersionProviderTest {
 
         assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isInstanceOf(UnreleasedVersion.class)
-                .hasToString("1.0.0-master.0+sha." + shortCommitId + ".dirty");
+                .hasToString("1.0.0.0-master+sha." + shortCommitId + ".dirty");
     }
 
     @Test
@@ -147,7 +147,7 @@ public class GitFlowVersionProviderTest {
 
         assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isInstanceOf(UnreleasedVersion.class)
-                .hasToString("1.0.0-feature_james_FEAT-1.2+sha." + shortCommitId);
+                .hasToString("1.0.0.2-feature_james_FEAT-1+sha." + shortCommitId);
     }
 
     @Test
@@ -175,7 +175,7 @@ public class GitFlowVersionProviderTest {
 
         assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
                 .isInstanceOf(UnreleasedVersion.class)
-                .hasToString("1.0.0-feature_james_FEAT-1.1+sha." + shortCommitId + ".dirty");
+                .hasToString("1.0.0.1-feature_james_FEAT-1+sha." + shortCommitId + ".dirty");
     }
 
     private void ignoreCurrentUntrackedChanges() throws Exception {
