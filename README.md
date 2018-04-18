@@ -33,7 +33,7 @@ The unreleased version format can be configured:
 ```groovy
 gitflow {
     // Customise template for unreleased version (uses freemarker)
-    unreleasedVersionTemplate "${major}.${minor}.${patch}-${branch?replace('/', '_')}.${commitsSinceLastTag}+sha.${commitId?substring(0,7)}${dirty?then('.dirty','')}"
+    unreleasedVersionTemplate "${major}.${minor}.${patch}.${commitsSinceLastTag}-${branch?replace('/', '_')}+sha.${commitId?substring(0,7)}${dirty?then('.dirty','')}"
 }
 ```
 
@@ -50,12 +50,12 @@ For any commit that is not tagged with a release version (`major.minor.patch`) a
 
 By default, an unreleased version is as follows:
 
-    0.0.1-feature/test1.1+sha.8661cfd.dirty
-    | | | |             |     |       |
-    | | | |             |     |       └ "dirty" is ppended if the commit is dirty
-    | | | |             |     └ Short commit id
-    | | | |             └ Number of commits since last tag
-    | | | └ Branch name
+    0.0.1.1-feature/test1+sha.8661cfd.dirty
+    | | | | |                 |       |
+    | | | | |                 |       └ "dirty" is ppended if the commit is dirty
+    | | | | |                 └ Short commit id
+    | | | | └ Branch name
+    | | | └ Number of commits since last tag
     | | └ Patch version for last release version
     | └ Minor version for last release version
     └ Major version for last release version
