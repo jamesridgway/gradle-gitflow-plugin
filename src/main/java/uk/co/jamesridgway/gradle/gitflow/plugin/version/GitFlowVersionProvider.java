@@ -67,7 +67,9 @@ public class GitFlowVersionProvider {
         }
 
         final Set<ReleaseVersion> releaseVersions = distanceToMostRecentTag.get().getTags().stream()
-                .map(tag -> ReleaseVersion.parse(tag.getShortTagName()).get())
+                .map(tag -> ReleaseVersion.parse(tag.getShortTagName()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(toSet());
 
         final ReleaseVersion latestReleaseVersion = ReleaseVersion.findLatest(releaseVersions).get();
