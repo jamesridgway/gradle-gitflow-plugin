@@ -1,4 +1,17 @@
 # Change Log
+
+## 1.5.2
+* Release build fix
+
+## 1.5.1
+* Fixed tag parsing issue
+
+## 1.5.0
+* Fix configuration of 'unreleaseVersionTemplate'
+
+## 1.4.0
+* Optimise most recent tag lookup
+
 ## 1.3.0
 * Improved performance for identifying the most recent tag.
 
