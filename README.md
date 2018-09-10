@@ -19,7 +19,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'uk.co.jamesridgway:gradle-gitflow-plugin:1.2.0'
+        classpath 'uk.co.jamesridgway:gradle-gitflow-plugin:1.5.0'
     }
 }
 ```
@@ -33,7 +33,7 @@ The unreleased version format can be configured:
 ```groovy
 gitflow {
     // Customise template for unreleased version (uses freemarker)
-    unreleasedVersionTemplate "${major}.${minor}.${patch}.${commitsSinceLastTag}-${branch?replace('/', '_')}+sha.${commitId?substring(0,7)}${dirty?then('.dirty','')}"
+    unreleasedVersionTemplate = '${major}.${minor}.${patch}.${commitsSinceLastTag}-${branch?replace("/", "_")}+sha.${commitId?substring(0,7)}${dirty?then(".dirty","")}'
 }
 ```
 

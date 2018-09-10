@@ -75,7 +75,7 @@ public class GitFlowVersionProvider {
         final int distanceFromLastTag = distanceToMostRecentTag.get().getDistance();
 
         UnreleasedVersion unreleasedVersion = UnreleasedVersion.build(latestReleaseVersion,
-                config.getUnreleaseVersionTemplate())
+                config.getUnreleasedVersionTemplate())
                 .withCommitsSinceLastTag(distanceFromLastTag)
                 .withCommitId(commitId)
                 .withBranch(gitProject.getBranchName())

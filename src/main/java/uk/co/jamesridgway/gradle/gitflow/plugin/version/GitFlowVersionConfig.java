@@ -6,6 +6,6 @@ public interface GitFlowVersionConfig {
             "${major}.${minor}.${patch}.${commitsSinceLastTag}-${branch?replace('/', '_')}"
                     + "+sha.${commitId?substring(0,7)}${dirty?then('.dirty','')}";
 
-    String getUnreleaseVersionTemplate();
+    String getUnreleasedVersionTemplate();
 
 }
