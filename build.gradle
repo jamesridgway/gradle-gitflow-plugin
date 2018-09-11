@@ -7,7 +7,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
-//apply plugin: 'uk.co.jamesridgway.gradle.gitflow.plugin'
+apply plugin: 'uk.co.jamesridgway.gradle.gitflow.plugin'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
