@@ -19,23 +19,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'uk.co.jamesridgway:gradle-gitflow-plugin:1.5.2'
+        classpath 'uk.co.jamesridgway:gradle-gitflow-plugin:1.5.3'
     }
 }
 ```
 
 
 That's all it takes, the plugin will set the `version` attribute of your build automatically.
-
-## Configuration
-The unreleased version format can be configured:
-
-```groovy
-gitflow {
-    // Customise template for unreleased version (uses freemarker)
-    unreleasedVersionTemplate = '${major}.${minor}.${patch}.${commitsSinceLastTag}-${branch?replace("/", "_")}+sha.${commitId?substring(0,7)}${dirty?then(".dirty","")}'
-}
-```
 
 ## How does it work?
 The plugin uses [jgit](https://github.com/eclipse/jgit) to infer the version number from the state of the repository.
@@ -61,3 +51,9 @@ By default, an unreleased version is as follows:
     └ Major version for last release version
 
 If the repository has never been tagged for a release the version will default to `0.0.0`
+
+## Configuration
+The following can be configured:
+* Unreleased version template
+
+Refer to the [configuration](https://github.com/jamesridgway/gradle-gitflow-plugin/wiki/Configuration) section of the wiki for detailed instructions on how to configure the plugin.

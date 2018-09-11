@@ -72,11 +72,16 @@ public class GitFlowVersionProvider {
                 .map(Optional::get)
                 .collect(toSet());
 
-        final ReleaseVersion latestReleaseVersion = ReleaseVersion.findLatest(releaseVersions).get();
+        Optional<ReleaseVersion> latestReleaseVersion = ReleaseVersion.findLatest(releaseVersions);
+        if (!latestReleaseVersion.isPresent()) {
+            return Optional.empty();
+        }
+
+        final ReleaseVersion releaseVersion = latestReleaseVersion.get();
         final String commitId = gitProject.getHeadCommit().get().getCommitId();
         final int distanceFromLastTag = distanceToMostRecentTag.get().getDistance();
 
-        UnreleasedVersion unreleasedVersion = UnreleasedVersion.build(latestReleaseVersion,
+        UnreleasedVersion unreleasedVersion = UnreleasedVersion.build(releaseVersion,
                 config.getUnreleasedVersionTemplate())
                 .withCommitsSinceLastTag(distanceFromLastTag)
                 .withCommitId(commitId)
