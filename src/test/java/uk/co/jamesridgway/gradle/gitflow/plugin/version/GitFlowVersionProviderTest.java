@@ -178,6 +178,44 @@ public class GitFlowVersionProviderTest {
                 .hasToString("1.0.0.1-feature_james_FEAT-1+sha." + shortCommitId + ".dirty");
     }
 
+    @Test
+    public void ignoreNonVerstionTagOnRelease() throws Exception {
+        createFile("readme.txt", "Hello world");
+        git.add().addFilepattern("readme.txt").call();
+        git.commit().setMessage("First commit").call();
+        git.tag().setName("1.0.0").call();
+
+        createFile("readme.2txt", "Goodbye world");
+        git.add().addFilepattern("readme.2txt").call();
+        git.commit().setMessage("Second commit").call();
+        git.tag().setName("non-version-tag").call();
+        git.tag().setName("2.0.0").call();
+        git.tag().setName("blah").call();
+
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
+                .isEqualTo(new ReleaseVersion(2, 0, 0));
+    }
+
+    @Test
+    public void ignoreNonVersionTag() throws Exception {
+        createFile("readme.txt", "Hello world");
+        git.add().addFilepattern("readme.txt").call();
+        git.commit().setMessage("First commit").call();
+        git.tag().setName("7.7.7").call();
+
+        createFile("readme.txt", "Hello world");
+        git.add().addFilepattern("readme.txt").call();
+        RevCommit commit = git.commit().setMessage("Another commit").call();
+        git.tag().setName("blah").call();
+
+        String shortCommitId = commit.getId().getName().substring(0, 7);
+
+        assertThat(gitFlowVersionProvider.getVersion(project.getRootDir()))
+                .isInstanceOf(UnreleasedVersion.class)
+                .hasToString("7.7.7.1-master+sha." + shortCommitId);
+
+    }
+
     private void ignoreCurrentUntrackedChanges() throws Exception {
         String gitIgnoreContents = git.status().call()
                 .getUntracked().stream()

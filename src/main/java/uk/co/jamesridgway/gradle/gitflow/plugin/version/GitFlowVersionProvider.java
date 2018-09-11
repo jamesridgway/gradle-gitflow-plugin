@@ -55,7 +55,11 @@ public class GitFlowVersionProvider {
     }
 
     private Optional<Version> inferUnreleasedVersion(final GitProject gitProject) {
-        final Set<Tag> tags = gitProject.getAllTags();
+        final Set<Tag> tags = gitProject.getAllTags()
+                .stream()
+                .filter(tag -> ReleaseVersion.parse(tag.getShortTagName()).isPresent())
+                .collect(toSet());
+
         if (tags.isEmpty() || !gitProject.getHeadCommit().isPresent()) {
             return Optional.empty();
         }

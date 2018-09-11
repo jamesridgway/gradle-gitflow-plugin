@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.5.4
+* Non-release tags not being ignored in search for latest version tag.
+
 ## 1.5.3
 * Completed bug fix for tag parsing and 'unreleaseVersionTemplate' configuration issues
 
