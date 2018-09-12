@@ -19,7 +19,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'uk.co.jamesridgway:gradle-gitflow-plugin:1.5.3'
+        classpath 'uk.co.jamesridgway:gradle-gitflow-plugin:1.5.5'
     }
 }
 ```
